@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Load schedule data
 async function loadSchedule() {
     try {
-        const response = await fetch('schedule.data.json');
+        const response = await fetch('schedule.data.json?v=1');
         state.schedule = await response.json();
     } catch (error) {
         console.error('Error loading schedule:', error);
@@ -52,19 +52,6 @@ function savePreferences() {
 
 // Event Listeners
 function setupEventListeners() {
-    // Debug button
-    const debugBtn = document.getElementById('debug-load-btn');
-    if (debugBtn) {
-        debugBtn.addEventListener('click', async () => {
-            console.log('🔄 Manual load triggered...');
-            console.log('Current schedule data count:', state.schedule.length);
-            await loadSchedule();
-            console.log('After reload - schedule data count:', state.schedule.length);
-            renderTimeline();
-            console.log('Timeline rendered');
-        });
-    }
-
     // Tab navigation
     document.getElementById('timeline-btn').addEventListener('click', () => switchView('timeline'));
     document.getElementById('itinerary-btn').addEventListener('click', () => switchView('itinerary'));
@@ -107,31 +94,103 @@ function renderTimeline() {
     const grid = document.getElementById('timeline-grid');
     grid.innerHTML = '';
 
-    // Group bands by venue for grid layout
-    const venues = [...new Set(state.schedule.map(b => b.location))];
-    const days = [1, 2, 3, 4];
+    // Get unique venues in order
+    const venues = ['Joy', 'Manhattan', 'Atrium', 'Spice H20', 'The Social', 'Pool Deck'];
+    
+    // Create time slots: 12 PM (Thu) to 3 AM (Mon) = 63 hours = 126 slots of 30 min each
+    const startHour = 12; // 12 PM (noon)
+    const slotsPerDay = 48; // 24 hours = 48 half-hour slots
+    const totalDays = 3.5; // Thu 12pm -> Sun 3am = 3.5 days worth
+    const totalSlots = Math.ceil(totalDays * slotsPerDay); // 168 slots to be safe
 
-    // Create grid positions
-    venues.forEach((venue, venueIndex) => {
-        const bandsByVenue = state.schedule.filter(b => b.location === venue);
+    // Build grid structure: each cell is venue × time slot
+    const timeSlotGrid = {};
+    
+    state.schedule.forEach(band => {
+        // Calculate which time slot this band occupies
+        const bandDate = new Date(band.starttime * 1000);
+        const bandHours = bandDate.getUTCHours();
+        const bandMinutes = bandDate.getUTCMinutes();
         
-        bandsByVenue.forEach(band => {
-            const card = createBandCard(band);
-            
-            // Calculate position in grid
-            const dayOffset = (band.day - 1) * 100;
-            const venueOffset = venueIndex * 10;
-            const order = dayOffset + venueOffset;
-            
-            card.style.order = order;
-            grid.appendChild(card);
-        });
+        let cruiseDay = band.day;
+        
+        // Calculate slot from 12 PM Thu (day 1)
+        let slotOffset = 0;
+        if (bandHours >= startHour) {
+            // Same day, after noon
+            slotOffset = (bandHours - startHour) * 2 + Math.floor(bandMinutes / 30);
+        } else if (bandHours < 12) {
+            // Early morning hours (12 AM - 11 AM) belong to same cruise day
+            slotOffset = (24 - startHour) * 2 + bandHours * 2 + Math.floor(bandMinutes / 30);
+        }
+        
+        const startSlot = (cruiseDay - 1) * slotsPerDay + slotOffset;
+        
+        // Calculate duration in slots
+        const durationMs = (band.endtime - band.starttime) * 1000;
+        const durationSlots = Math.ceil(durationMs / (30 * 60 * 1000));
+        
+        // Find venue index
+        const venueIndex = venues.indexOf(band.location);
+        if (venueIndex === -1) return; // Invalid venue
+        
+        // Store in grid: key = "slot-venue"
+        for (let i = 0; i < durationSlots; i++) {
+            const slotKey = `${startSlot + i}-${venueIndex}`;
+            if (!timeSlotGrid[slotKey]) {
+                timeSlotGrid[slotKey] = [];
+            }
+            timeSlotGrid[slotKey].push(band);
+        }
     });
 
-    // Sort cards visually
-    const cards = Array.from(grid.children);
-    cards.sort((a, b) => parseInt(a.style.order) - parseInt(b.style.order));
-    cards.forEach(card => grid.appendChild(card));
+    // Render grid with proper layout
+    grid.style.display = 'grid';
+    grid.style.gridTemplateColumns = `repeat(${venues.length}, 1fr)`;
+    grid.style.gap = '4px';
+    grid.style.padding = '10px';
+    
+    // For each time slot and venue, render cards
+    for (let slot = 0; slot < totalSlots; slot++) {
+        for (let venueIdx = 0; venueIdx < venues.length; venueIdx++) {
+            const slotKey = `${slot}-${venueIdx}`;
+            const bandsInSlot = timeSlotGrid[slotKey];
+            
+            if (bandsInSlot && bandsInSlot.length > 0) {
+                // Render first band in this slot (avoid duplicates across multiple slots of same show)
+                const band = bandsInSlot[0];
+                const bandId = `${band.band}-${band.starttime}-${band.endtime}`;
+                
+                // Only render once at the starting slot
+                const bandDate = new Date(band.starttime * 1000);
+                const bandHours = bandDate.getUTCHours();
+                const bandMinutes = bandDate.getUTCMinutes();
+                let slotOffset = 0;
+                if (bandHours >= startHour) {
+                    slotOffset = (bandHours - startHour) * 2 + Math.floor(bandMinutes / 30);
+                } else if (bandHours < 12) {
+                    slotOffset = (24 - startHour) * 2 + bandHours * 2 + Math.floor(bandMinutes / 30);
+                }
+                const bandStartSlot = (band.day - 1) * slotsPerDay + slotOffset;
+                
+                if (slot === bandStartSlot) {
+                    const card = createBandCard(band);
+                    const durationMs = (band.endtime - band.starttime) * 1000;
+                    const durationSlots = Math.ceil(durationMs / (30 * 60 * 1000));
+                    card.style.gridRow = `span ${durationSlots}`;
+                    grid.appendChild(card);
+                } else {
+                    // Add empty cell for continuation of multi-row cards
+                    const spacer = document.createElement('div');
+                    grid.appendChild(spacer);
+                }
+            } else {
+                // Empty slot
+                const empty = document.createElement('div');
+                grid.appendChild(empty);
+            }
+        }
+    }
 }
 
 function createBandCard(band) {

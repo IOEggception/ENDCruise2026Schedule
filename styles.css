@@ -170,10 +170,11 @@ body {
 .timeline-grid {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    gap: 10px;
+    gap: 4px;
     padding: 10px;
     background: linear-gradient(to right, #fafafa 0%, #fff 50%, #fafafa 100%);
     min-height: 100%;
+    grid-auto-rows: 80px;
 }
 
 /* Band Cards */
