@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emos Not Dead - Cruise Schedule 2026</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🎸 EMOS NOT DEAD - Cruise Schedule 2026</h1>
+            <p>January 22-25 • Interactive Timeline & Itinerary</p>
+            <nav class="nav-tabs">
+                <button id="timeline-btn" class="tab-btn active" data-view="timeline">Timeline Grid</button>
+                <button id="itinerary-btn" class="tab-btn" data-view="itinerary">My Itinerary</button>
+            </nav>
+        </header>
+
+        <!-- Timeline View -->
+        <div id="timeline-view" class="view active">
+            <div class="timeline-controls">
+                <div class="legend-compact">
+                    <span class="legend-item" style="background: #4ECDC4;">Joy</span>
+                    <span class="legend-item" style="background: #45B7D1;">Manhattan</span>
+                    <span class="legend-item" style="background: #FFA07A;">Atrium</span>
+                    <span class="legend-item" style="background: #98D8C8;">Spice H20</span>
+                    <span class="legend-item" style="background: #F7DC6F;">The Social</span>
+                    <span class="legend-item" style="background: #FF6B6B;">Pool Deck</span>
+                </div>
+                <div class="controls-right">
+                    <label>
+                        <input type="checkbox" id="show-hidden" checked>
+                        Show Hidden
+                    </label>
+                </div>
+            </div>
+
+            <div class="timeline-container">
+                <!-- Y-axis (Time) -->
+                <div class="time-axis">
+                    <div class="time-slot">11 AM</div>
+                    <div class="time-slot">12 PM</div>
+                    <div class="time-slot">1 PM</div>
+                    <div class="time-slot">2 PM</div>
+                    <div class="time-slot">3 PM</div>
+                    <div class="time-slot">4 PM</div>
+                    <div class="time-slot">5 PM</div>
+                    <div class="time-slot">6 PM</div>
+                    <div class="time-slot">7 PM</div>
+                    <div class="time-slot">8 PM</div>
+                    <div class="time-slot">9 PM</div>
+                    <div class="time-slot">10 PM</div>
+                    <div class="time-slot">11 PM</div>
+                    <div class="time-slot">12 AM</div>
+                    <div class="time-slot">1 AM</div>
+                </div>
+
+                <!-- Grid Container (scrollable) -->
+                <div class="grid-wrapper">
+                    <div id="timeline-grid" class="timeline-grid">
+                        <!-- Cards will be rendered here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-info">
+                <p>❤️ Click heart to favorite • Right-click to hide • Favorites saved locally</p>
+            </div>
+        </div>
+
+        <!-- Itinerary View -->
+        <div id="itinerary-view" class="view">
+            <div class="itinerary-container">
+                <!-- Favorites List -->
+                <div class="itinerary-favorites">
+                    <h2>My Favorites</h2>
+                    <div id="favorites-list" class="favorites-list">
+                        <!-- Favorites will be rendered here -->
+                    </div>
+                </div>
+
+                <!-- Custom Events Form -->
+                <div class="custom-event-section">
+                    <h3>Add Custom Event</h3>
+                    <form id="custom-event-form" class="custom-event-form">
+                        <input type="text" id="event-name" placeholder="Event name (e.g., Dinner, Sleep)" required>
+                        <select id="event-day" required>
+                            <option value="">Select Day</option>
+                            <option value="1">Thursday, Jan 22</option>
+                            <option value="2">Friday, Jan 23</option>
+                            <option value="3">Saturday, Jan 24</option>
+                            <option value="4">Sunday, Jan 25</option>
+                        </select>
+                        <input type="time" id="event-time" required>
+                        <input type="number" id="event-duration" placeholder="Duration (minutes)" min="15" max="480" value="60" required>
+                        <input type="color" id="event-color" value="#888888">
+                        <button type="submit">Add Event</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

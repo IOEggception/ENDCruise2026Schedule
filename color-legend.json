@@ -1,0 +1,71 @@
+{
+  "venues": [
+    {
+      "name": "Joy",
+      "deck": "Deck 7, FWD",
+      "color": "#4ECDC4",
+      "colorName": "Teal"
+    },
+    {
+      "name": "Manhattan",
+      "deck": "Deck 7, AFT",
+      "color": "#45B7D1",
+      "colorName": "Blue"
+    },
+    {
+      "name": "Atrium",
+      "deck": "Deck 6, MID",
+      "color": "#FFA07A",
+      "colorName": "Coral"
+    },
+    {
+      "name": "Spice H20",
+      "deck": "Deck 17, AFT",
+      "color": "#98D8C8",
+      "colorName": "Mint"
+    },
+    {
+      "name": "The Social",
+      "deck": "Deck 6, MID",
+      "color": "#F7DC6F",
+      "colorName": "Yellow"
+    },
+    {
+      "name": "Pool Deck",
+      "deck": "Deck 16, MID",
+      "color": "#FF6B6B",
+      "colorName": "Red"
+    }
+  ],
+  "days": {
+    "1": {
+      "name": "Thursday",
+      "date": "January 22, 2026",
+      "port": "Miami, FL",
+      "portHours": "10:00 AM - 6:00 PM"
+    },
+    "2": {
+      "name": "Friday",
+      "date": "January 23, 2026",
+      "theme": "DEAD NIGHTMARE AT SEA"
+    },
+    "3": {
+      "name": "Saturday",
+      "date": "January 24, 2026",
+      "port": "Costa Maya, Mexico",
+      "portHours": "8:00 AM - 5:00 PM",
+      "allAboard": "4:30 PM"
+    },
+    "4": {
+      "name": "Sunday",
+      "date": "January 25, 2026",
+      "theme": "CASINO ROYALE"
+    }
+  },
+  "statistics": {
+    "totalBands": 96,
+    "totalVenues": 6,
+    "totalDays": 4,
+    "timeRange": "11:00 AM - 1:00 AM daily"
+  }
+}
