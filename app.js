@@ -8,8 +8,8 @@ const state = {
 };
 
 // Initialize
-document.addEventListener('DOMContentLoaded', () => {
-    loadSchedule();
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadSchedule();
     loadPreferences();
     setupEventListeners();
     renderTimeline();
