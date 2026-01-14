@@ -52,6 +52,19 @@ function savePreferences() {
 
 // Event Listeners
 function setupEventListeners() {
+    // Debug button
+    const debugBtn = document.getElementById('debug-load-btn');
+    if (debugBtn) {
+        debugBtn.addEventListener('click', async () => {
+            console.log('🔄 Manual load triggered...');
+            console.log('Current schedule data count:', state.schedule.length);
+            await loadSchedule();
+            console.log('After reload - schedule data count:', state.schedule.length);
+            renderTimeline();
+            console.log('Timeline rendered');
+        });
+    }
+
     // Tab navigation
     document.getElementById('timeline-btn').addEventListener('click', () => switchView('timeline'));
     document.getElementById('itinerary-btn').addEventListener('click', () => switchView('itinerary'));
